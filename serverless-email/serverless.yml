@@ -1,0 +1,30 @@
+service: hms-email-service
+
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: python3.11
+  region: us-east-1
+  environment:
+    SMTP_HOST: smtp.gmail.com
+    SMTP_PORT: 587
+    SMTP_USER: ${env:SMTP_USER}
+    SMTP_PASS: ${env:SMTP_PASS}
+    FROM_EMAIL: ${env:SMTP_USER}
+
+functions:
+  sendEmail:
+    handler: handler.send_email
+    events:
+      - httpApi:
+          path: /send-email
+          method: post
+
+plugins:
+  - serverless-offline
+
+custom:
+  serverless-offline:
+    httpPort: 4000
+    noPrependStageInUrl: true

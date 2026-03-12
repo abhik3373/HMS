@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Confirm Booking - HMS{% endblock %}
+{% block content %}
+<div class="container" style="max-width:520px;">
+    <div class="page-header">
+        <a href="{% url 'slot_list' slot.doctor.pk %}" style="color:var(--text-muted); font-size:0.9rem; text-decoration:none;">← Back to Slots</a>
+        <h1 style="margin-top:0.5rem;">✅ Confirm Booking</h1>
+    </div>
+    <div class="card">
+        <div style="background:var(--bg-card2); border-radius:10px; padding:1.5rem; margin-bottom:1.5rem;">
+            <div style="display:flex; gap:1rem; align-items:center; margin-bottom:1rem;">
+                <div style="font-size:2.5rem;">👨‍⚕️</div>
+                <div>
+                    <div style="font-size:1.2rem; font-weight:700;">Dr. {{ slot.doctor.get_full_name }}</div>
+                    <div style="color:var(--text-muted); font-size:0.85rem;">{{ slot.doctor.email }}</div>
+                </div>
+            </div>
+            <hr class="divider">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:1rem;">
+                <div>
+                    <div style="color:var(--text-muted); font-size:0.8rem; margin-bottom:0.2rem;">DATE</div>
+                    <div style="font-weight:600;">{{ slot.date|date:"D, d M Y" }}</div>
+                </div>
+                <div>
+                    <div style="color:var(--text-muted); font-size:0.8rem; margin-bottom:0.2rem;">TIME</div>
+                    <div style="font-weight:600;">{{ slot.start_time|time:"H:i" }} – {{ slot.end_time|time:"H:i" }}</div>
+                </div>
+            </div>
+        </div>
+        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1.2rem;">
+            By confirming, this slot will be reserved exclusively for you. A confirmation email will be sent to <strong>{{ request.user.email }}</strong>.
+        </p>
+        <form method="post" style="display:flex; gap:0.8rem;">
+            {% csrf_token %}
+            <button type="submit" id="confirm-btn" class="btn btn-success" style="flex:1; justify-content:center; padding:0.8rem;">
+                ✅ Confirm Appointment
+            </button>
+            <a href="{% url 'slot_list' slot.doctor.pk %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+document.querySelector('form').addEventListener('submit', function() {
+    const btn = document.getElementById('confirm-btn');
+    btn.textContent = '⏳ Booking...';
+    btn.disabled = true;
+    // Form already submitted — this is just visual feedback
+});
+</script>
+{% endblock %}

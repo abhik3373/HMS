@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% block title %}My Appointments - HMS{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="page-header" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
+        <div>
+            <h1>🧑‍⚕️ Patient Dashboard</h1>
+            <p>Welcome, {{ request.user.get_full_name|default:request.user.username }}</p>
+        </div>
+        <div style="display:flex; gap:0.8rem;">
+            {% if not request.user.google_token %}
+            <a href="{% url 'oauth_start' %}" class="btn btn-secondary">📅 Connect Google Calendar</a>
+            {% endif %}
+            <a href="{% url 'doctor_list' %}" class="btn btn-primary">🔍 Find Doctors</a>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-3" style="margin-bottom:2rem;">
+        <div class="stat-card">
+            <div class="stat-number">{{ appointments.count }}</div>
+            <div class="stat-label">Total Appointments</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" style="color:var(--success);">
+                {{ appointments|length }}
+            </div>
+            <div class="stat-label">Confirmed</div>
+        </div>
+        <div class="stat-card">
+            {% if request.user.google_token %}
+            <div class="stat-number" style="color:var(--success);">✓</div>
+            <div class="stat-label">Google Calendar Connected</div>
+            {% else %}
+            <div class="stat-number" style="color:var(--warning);">!</div>
+            <div class="stat-label">Calendar Not Connected</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Appointments -->
+    <div class="card">
+        <div class="card-header">
+            <h2>📋 My Appointments</h2>
+        </div>
+        {% if appointments %}
+        <div style="display:flex; flex-direction:column; gap:0.8rem;">
+            {% for appt in appointments %}
+            <div class="slot-card">
+                <div style="display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap;">
+                    <div style="font-size:1.8rem;">👨‍⚕️</div>
+                    <div>
+                        <div style="font-weight:600;">Dr. {{ appt.slot.doctor.get_full_name }}</div>
+                        <div style="color:var(--text-muted); font-size:0.85rem;">
+                            {{ appt.slot.date|date:"D, d M Y" }} &nbsp;|&nbsp; {{ appt.slot.start_time|time:"H:i" }} – {{ appt.slot.end_time|time:"H:i" }}
+                        </div>
+                    </div>
+                    <span class="badge badge-{% if appt.status == 'confirmed' %}green{% else %}red{% endif %}">
+                        {{ appt.status|title }}
+                    </span>
+                    {% if appt.doctor_calendar_event_id %}
+                    <span class="badge badge-blue">📅 Calendar Added</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="icon">🏥</div>
+            <h3>No appointments yet</h3>
+            <p>Browse doctors and book your first appointment.</p>
+            <a href="{% url 'doctor_list' %}" class="btn btn-primary" style="margin-top:1rem;">Find Doctors</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

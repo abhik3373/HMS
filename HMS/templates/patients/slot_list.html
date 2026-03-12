@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Available Slots - Dr. {{ doctor.get_full_name }} - HMS{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <a href="{% url 'doctor_list' %}" style="color:var(--text-muted); font-size:0.9rem; text-decoration:none;">← Back to Doctors</a>
+        <h1 style="margin-top:0.5rem;">🗓️ Dr. {{ doctor.get_full_name }}</h1>
+        <p>Select an available time slot to book your appointment.</p>
+    </div>
+
+    {% if slots %}
+    <div style="display:flex; flex-direction:column; gap:0.8rem;">
+        {% for slot in slots %}
+        <div class="slot-card" style="animation: slideIn 0.3s ease forwards; animation-delay: {{ forloop.counter0 }}00ms; opacity:0;">
+            <div style="display:flex; align-items:center; gap:1.5rem;">
+                <div style="text-align:center; background:var(--bg-card2); padding:0.8rem 1.2rem; border-radius:10px; min-width:90px;">
+                    <div style="font-size:1.2rem; font-weight:700; color:var(--primary-light);">{{ slot.start_time|time:"H:i" }}</div>
+                    <div style="font-size:0.75rem; color:var(--text-muted);">to {{ slot.end_time|time:"H:i" }}</div>
+                </div>
+                <div>
+                    <div style="font-weight:600;">{{ slot.date|date:"l, d F Y" }}</div>
+                    <div style="color:var(--text-muted); font-size:0.85rem;">
+                        Duration: {{ slot.start_time|time:"H:i" }}–{{ slot.end_time|time:"H:i" }}
+                    </div>
+                </div>
+                <span class="badge badge-green">Available</span>
+            </div>
+            <a href="{% url 'book_slot' slot.pk %}" class="btn btn-success">Book Slot →</a>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="icon">📭</div>
+        <h3>No available slots</h3>
+        <p>Dr. {{ doctor.get_full_name }} has no upcoming available slots right now.</p>
+        <a href="{% url 'doctor_list' %}" class="btn btn-secondary" style="margin-top:1rem;">Browse Other Doctors</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

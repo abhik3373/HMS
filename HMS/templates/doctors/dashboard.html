@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %}Doctor Dashboard - HMS{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="page-header" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
+        <div>
+            <h1>👨‍⚕️ Doctor Dashboard</h1>
+            <p>Welcome back, Dr. {{ request.user.get_full_name|default:request.user.username }}</p>
+        </div>
+        <div style="display:flex; gap:0.8rem;">
+            {% if not request.user.google_token %}
+            <a href="{% url 'oauth_start' %}" class="btn btn-secondary">📅 Connect Google Calendar</a>
+            {% endif %}
+            <a href="{% url 'add_slot' %}" class="btn btn-primary">+ Add Availability Slot</a>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-3" style="margin-bottom:2rem;">
+        <div class="stat-card">
+            <div class="stat-number">{{ upcoming_slots.count }}</div>
+            <div class="stat-label">Upcoming Slots</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ upcoming_slots|dictsort:"is_booked"|last|default:0 }}</div>
+            <div class="stat-label" style="color:var(--success);">Booked Slots</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ past_slots.count }}</div>
+            <div class="stat-label">Past Slots</div>
+        </div>
+    </div>
+
+    <!-- Upcoming Slots -->
+    <div class="card" style="margin-bottom:1.5rem;">
+        <div class="card-header" style="display:flex; align-items:center; justify-content:space-between;">
+            <h2>📅 Upcoming Availability Slots</h2>
+            <a href="{% url 'add_slot' %}" class="btn btn-primary btn-sm">+ Add Slot</a>
+        </div>
+        {% if upcoming_slots %}
+        <div style="display:flex; flex-direction:column; gap:0.8rem;">
+            {% for slot in upcoming_slots %}
+            <div class="slot-card {% if slot.is_booked %}booked{% endif %}">
+                <div style="display:flex; align-items:center; gap:1.5rem;">
+                    <div>
+                        <div style="font-weight:600;">{{ slot.date|date:"D, d M Y" }}</div>
+                        <div style="color:var(--text-muted); font-size:0.85rem;">{{ slot.start_time|time:"H:i" }} – {{ slot.end_time|time:"H:i" }}</div>
+                    </div>
+                    {% if slot.is_booked %}
+                        <span class="badge badge-red">Booked</span>
+                        {% if slot.appointment %}
+                        <span style="color:var(--text-muted); font-size:0.85rem;">by {{ slot.appointment.patient.get_full_name }}</span>
+                        {% endif %}
+                    {% else %}
+                        <span class="badge badge-green">Available</span>
+                    {% endif %}
+                </div>
+                {% if not slot.is_booked %}
+                <div style="display:flex; gap:0.5rem;">
+                    <a href="{% url 'edit_slot' slot.pk %}" class="btn btn-secondary btn-sm">Edit</a>
+                    <a href="{% url 'delete_slot' slot.pk %}" class="btn btn-danger btn-sm">Delete</a>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="icon">📭</div>
+            <h3>No upcoming slots</h3>
+            <p>Add your availability so patients can book appointments.</p>
+            <a href="{% url 'add_slot' %}" class="btn btn-primary" style="margin-top:1rem;">+ Add First Slot</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

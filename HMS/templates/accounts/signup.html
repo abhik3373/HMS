@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block title %}Sign Up - HMS{% endblock %}
+{% block content %}
+<div style="min-height:100vh; display:flex; align-items:center; justify-content:center; padding:2rem;">
+    <div style="width:100%; max-width:480px;">
+        <div style="text-align:center; margin-bottom:2rem;">
+            <div style="font-size:3rem; margin-bottom:0.5rem;">🏥</div>
+            <h1 style="font-size:1.8rem; font-weight:700;">Create Account</h1>
+            <p style="color:var(--text-muted); margin-top:0.4rem;">Join the Hospital Management System</p>
+        </div>
+        <div class="card">
+            <form method="post">
+                {% csrf_token %}
+                <!-- Role Selector -->
+                <div class="form-group">
+                    <label class="form-label">I am a...</label>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.8rem;">
+                        <label id="role-doctor" style="display:flex; align-items:center; gap:0.8rem; padding:1rem; border:2px solid var(--border); border-radius:10px; cursor:pointer; transition:all 0.2s;">
+                            <input type="radio" name="role" value="doctor" style="display:none;" onchange="selectRole('doctor')">
+                            <span style="font-size:1.5rem;">🩺</span>
+                            <span style="font-weight:600;">Doctor</span>
+                        </label>
+                        <label id="role-patient" style="display:flex; align-items:center; gap:0.8rem; padding:1rem; border:2px solid var(--border); border-radius:10px; cursor:pointer; transition:all 0.2s;">
+                            <input type="radio" name="role" value="patient" style="display:none;" onchange="selectRole('patient')">
+                            <span style="font-size:1.5rem;">🧑‍⚕️</span>
+                            <span style="font-weight:600;">Patient</span>
+                        </label>
+                    </div>
+                    {% for error in form.role.errors %}<p class="form-errors">{{ error }}</p>{% endfor %}
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                    <div class="form-group">
+                        <label class="form-label">First Name</label>
+                        {{ form.first_name }}
+                        {% for e in form.first_name.errors %}<p class="form-errors">{{ e }}</p>{% endfor %}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Last Name</label>
+                        {{ form.last_name }}
+                        {% for e in form.last_name.errors %}<p class="form-errors">{{ e }}</p>{% endfor %}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    {{ form.email }}
+                    {% for e in form.email.errors %}<p class="form-errors">{{ e }}</p>{% endfor %}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Username</label>
+                    {{ form.username }}
+                    {% for e in form.username.errors %}<p class="form-errors">{{ e }}</p>{% endfor %}
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Phone (optional)</label>
+                    {{ form.phone }}
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        {{ form.password1 }}
+                        {% for e in form.password1.errors %}<p class="form-errors">{{ e }}</p>{% endfor %}
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Confirm Password</label>
+                        {{ form.password2 }}
+                        {% for e in form.password2.errors %}<p class="form-errors">{{ e }}</p>{% endfor %}
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center; padding:0.8rem; font-size:1rem; margin-top:0.5rem;">
+                    Create Account →
+                </button>
+            </form>
+            <hr class="divider">
+            <p style="text-align:center; color:var(--text-muted); font-size:0.9rem;">
+                Already have an account? <a href="{% url 'login' %}" style="color:var(--primary-light); font-weight:600;">Sign In</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script>
+function selectRole(role) {
+    document.getElementById('role-doctor').style.borderColor = role === 'doctor' ? 'var(--primary)' : 'var(--border)';
+    document.getElementById('role-patient').style.borderColor = role === 'patient' ? 'var(--primary)' : 'var(--border)';
+    document.getElementById('role-doctor').style.background = role === 'doctor' ? 'rgba(99,102,241,0.1)' : '';
+    document.getElementById('role-patient').style.background = role === 'patient' ? 'rgba(99,102,241,0.1)' : '';
+}
+// Style all inputs
+document.querySelectorAll('input[type=text], input[type=email], input[type=password]').forEach(el => {
+    el.classList.add('form-control');
+});
+</script>
+{% endblock %}

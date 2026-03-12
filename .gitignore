@@ -1,0 +1,32 @@
+# Environment Variables
+.env
+
+# Virtual Environments
+.venv/
+venv/
+env/
+ENV/
+Lib/
+Scripts/
+Include/
+pyvenv.cfg
+
+# Credentials & APIs
+credentials.json
+client_secret_*.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Django
+db.sqlite3
+
+# Node.js
+node_modules/
+
+# OS generated files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Booking Confirmed! - HMS{% endblock %}
+{% block content %}
+<div class="container" style="max-width:520px; text-align:center; padding-top:4rem;">
+    <div style="animation: pop 0.5s ease;">
+        <div style="font-size:5rem; margin-bottom:1rem;">🎉</div>
+        <h1 style="font-size:2rem; margin-bottom:0.5rem;">Booking Confirmed!</h1>
+        <p style="color:var(--text-muted); margin-bottom:2rem;">Your appointment has been successfully booked. A confirmation email has been sent to you.</p>
+    </div>
+    <div class="card" style="text-align:left; margin-bottom:1.5rem;">
+        <div style="background:var(--bg-card2); border-radius:10px; padding:1.5rem;">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.2rem;">
+                <div>
+                    <div style="color:var(--text-muted); font-size:0.8rem;">DOCTOR</div>
+                    <div style="font-weight:600; margin-top:0.2rem;">Dr. {{ appointment.slot.doctor.get_full_name }}</div>
+                </div>
+                <div>
+                    <div style="color:var(--text-muted); font-size:0.8rem;">PATIENT</div>
+                    <div style="font-weight:600; margin-top:0.2rem;">{{ appointment.patient.get_full_name }}</div>
+                </div>
+                <div>
+                    <div style="color:var(--text-muted); font-size:0.8rem;">DATE</div>
+                    <div style="font-weight:600; margin-top:0.2rem;">{{ appointment.slot.date|date:"D, d M Y" }}</div>
+                </div>
+                <div>
+                    <div style="color:var(--text-muted); font-size:0.8rem;">TIME</div>
+                    <div style="font-weight:600; margin-top:0.2rem;">{{ appointment.slot.start_time|time:"H:i" }} – {{ appointment.slot.end_time|time:"H:i" }}</div>
+                </div>
+            </div>
+            {% if appointment.patient_calendar_event_id %}
+            <div style="margin-top:1rem; padding-top:1rem; border-top:1px solid var(--border);">
+                <span class="badge badge-blue">📅 Added to Google Calendar</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div style="display:flex; gap:0.8rem; justify-content:center;">
+        <a href="{% url 'patient_dashboard' %}" class="btn btn-primary">View My Appointments</a>
+        <a href="{% url 'doctor_list' %}" class="btn btn-secondary">Book Another</a>
+    </div>
+</div>
+{% endblock %}
+{% block extra_css %}
+<style>
+@keyframes pop {
+    0% { transform: scale(0.8); opacity: 0; }
+    70% { transform: scale(1.05); }
+    100% { transform: scale(1); opacity: 1; }
+}
+</style>
+{% endblock %}
